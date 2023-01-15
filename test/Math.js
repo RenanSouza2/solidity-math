@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const { exec } = require('child_process');
 const { BigNumber } = ethers;
 
 async function waitTx(txPromisse) {
@@ -59,6 +60,22 @@ function randRange(min, max) {
 const ONE = BigNumber.from(10).pow(18);
 const TWO = dec18(2);
 
+const logs = [
+    '000000000000000000',
+    '137503523749934908',
+    '263034405833793833',
+    '378511623253729812',
+    '485426827170241759',
+    '584962500721156181',
+    '678071905112637652',
+    '765534746362977060',
+    '847996906554950015',
+    '925999418556223145'
+].map(num => BigNumber.from(num));
+
+const sigma = BigNumber.from(30);
+
+
 function dec18(num) {
   return ONE.mul(num);
 }
@@ -79,29 +96,36 @@ describe('Math', async function () {
 
   describe('log2dec', async function () {
     it('value', async function () {
-      const logs = [
-        '000000000000000000',
-        '137503523749934908',
-        '263034405833793833',
-        '378511623253729812',
-        '485426827170241759',
-        '584962500721156181',
-        '678071905112637652',
-        '765534746362977060',
-        '847996906554950015',
-        '925999418556223145'
-      ].map(item => BigNumber.from(item));
-
-      const sigma = BigNumber.from(30);
-
       for (let i=0; i<10; i++) {
         const x = dec(10 + i, 17);
         const y = await math.log2dec(x);
 
-        const min = logs[i].sub(sigma);
-        const max = logs[i].add(sigma);
-        expect(y).within(min, max);
+        const diff = y.sub(logs[i]).abs();
+        expect(diff).lt(sigma);
       }
+    });
+  });
+
+  describe('log2', async function () {
+    it('1.5', async function () {
+      const x = dec(15, 17);
+      const y = await math.log2(x);
+      
+      const diff = y.sub(logs[5]).abs();
+      expect(diff).lt(sigma);
+    });
+
+    it('2', async function () {
+      const y = await math.log2(TWO);
+      expect(y).equal(ONE);
+    });
+
+    it('3', async function () {
+      const x = dec(3, 18);
+      const y = await math.log2(x);
+
+      const diff = y.sub(ONE.add(logs[5])).abs();
+      expect(diff).lt(sigma);
     });
   });
 });
