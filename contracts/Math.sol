@@ -23,4 +23,16 @@ contract Math {
             }
         }
     }
+
+    function log2(uint x)
+    public pure returns (uint) {
+        uint y_int = 0;
+        while(x >= TWO) {
+            y_int ++;
+            x /= 2;
+        }
+
+        uint y_dec = log2dec(x);
+        return y_int * ONE + y_dec;
+    }
 }
