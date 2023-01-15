@@ -96,7 +96,7 @@ describe('Math', async function () {
 
       for (let i=0; i<10; i++) {
         const x = dec(10 + i, 17);
-        const y = await math.log2(x);
+        const y = await math.log2dec(x);
 
         const min = logs[i].sub(sigma);
         const max = logs[i].add(sigma);
