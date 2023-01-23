@@ -146,11 +146,29 @@ describe('Math', async function () {
       for(let i=0; i<10; i++) {
         const x = dec(i, 17);
         const y = await math.pow2dec(x);
+
         const diff = y.sub(res[i]).abs();
         expect(diff).lessThan(sigma);
       }
     });
   });
 
-  describe('pow2', async function () {});
+  describe('pow2', async function () {
+    it('test', async function () {
+      const res = [
+        '1000000000000000000',
+        '1414213562373095048',
+        '2000000000000000000',
+        '2828427124746190097'
+      ];
+
+      for(let i=0; i<4; i++) {
+        const x = dec(5*i, 17);
+        const y = await math.pow2(x);
+
+        const diff = y.sub(res[i]).abs();
+        expect(diff).lessThan(sigma);
+      }
+    });
+  });
 });
