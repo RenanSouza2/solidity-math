@@ -1,5 +1,4 @@
 const { expect } = require('chai');
-const { exec } = require('child_process');
 const { BigNumber } = ethers;
 
 async function waitTx(txPromisse) {
@@ -128,4 +127,30 @@ describe('Math', async function () {
       expect(diff).lt(sigma);
     });
   });
+  
+  describe('pow2dec', async function () {
+    it('Test', async function () {
+      const res = [
+        '1000000000000000000',
+        '1071773462536293164',
+        '1148698354997035006',
+        '1231144413344916284',
+        '1319507910772894259',
+        '1414213562373095048',
+        '1515716566510398082',
+        '1624504792712471045',
+        '1741101126592248278',
+        '1866065983073614831'
+      ].map(num => BigNumber.from(num));
+
+      for(let i=0; i<10; i++) {
+        const x = dec(i, 17);
+        const y = await math.pow2dec(x);
+        const diff = y.sub(res[i]).abs();
+        expect(diff).lessThan(sigma);
+      }
+    });
+  });
+
+  describe('pow2', async function () {});
 });
