@@ -103,6 +103,12 @@ describe('Math', async function () {
         expect(diff).lt(sigma);
       }
     });
+
+    it('should fail if input less than ONE', async function () {
+      const x = dec(0, 18);
+      const tx = math.log2dec(x);
+      await expect(tx).reverted;
+    });
   });
 
   describe('log2', async function () {
@@ -125,6 +131,12 @@ describe('Math', async function () {
 
       const diff = y.sub(ONE.add(logs[5])).abs();
       expect(diff).lt(sigma);
+    });
+
+    it('should fail if input less than ONE', async function () {
+      const x = dec(0, 18);
+      const tx = math.log2(x);
+      await expect(tx).reverted;
     });
   });
   
@@ -169,6 +181,74 @@ describe('Math', async function () {
         const diff = y.sub(res[i]).abs();
         expect(diff).lessThan(sigma);
       }
+    });
+
+    it('Should fail if input is too large', async function () {
+      const x = dec(256, 18);
+      const tx = math.pow2(x);
+      await expect(tx).reverted
+    });
+  });
+
+  describe('pow', async function () {
+    it('3 pow 0.5', async function () {
+      const a = dec(3, 18);
+      const b = dec(5, 17);
+      
+      const y = await math.pow(a, b);
+      const res = BigNumber.from('1732050807568877293');
+      const diff = y.sub(res).abs();
+      expect(diff).lt(sigma);
+    });
+
+    it('a pow 0', async function () {
+      const a = dec(3, 18);
+      const b = 0;
+      
+      const y = await math.pow(a, b);
+      const res = BigNumber.from('1000000000000000000');
+      const diff = y.sub(res).abs();
+      expect(diff).lt(sigma);
+    });
+
+    it('1 pow b', async function () {
+      const a = dec(1, 18);
+      const b = dec(5, 17);
+      
+      const y = await math.pow(a, b);
+      const res = BigNumber.from('1000000000000000000');
+      const diff = y.sub(res).abs();
+      expect(diff).lt(sigma);
+    });
+
+    it('2 pow b', async function () {
+      const a = dec(2, 18);
+      const b = dec(2, 18);
+      
+      const y = await math.pow(a, b);
+      const res = BigNumber.from('4000000000000000000');
+      const diff = y.sub(res).abs();
+      expect(diff).lt(sigma);
+    });
+     
+    it('3 pow 2', async function () {
+      const a = dec(3, 18);
+      const b = dec(2, 18);
+      
+      const y = await math.pow(a, b);
+      const res = BigNumber.from('9000000000000000000');
+      
+      const diff = y.sub(res).abs();
+      expect(diff).lt(sigma.mul(15));
+    });
+
+
+    it('should revert if base is less than one', async function () {
+      const a = dec(2, 17);
+      const b = dec(2, 18);
+      
+      const tx = math.pow(a, b);
+      await expect(tx).reverted;
     });
   });
 });

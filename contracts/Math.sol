@@ -68,9 +68,10 @@ contract Math {
         1000000000000000000
     ];
 
-    // x is an fixed point 18 number less than 2
     function log2dec(uint x)
     public pure returns (uint y) {
+        require(x >= ONE, 'log2dec: x should be between one and two');
+
         uint _ONE = ONE;
         uint _TWO = TWO;
         assembly {
@@ -118,6 +119,18 @@ contract Math {
     public view returns (uint) {
         uint x_dec = x % ONE;
         uint x_int = x / ONE;
-        return (2 ** x_int) * pow2dec(x_dec);
+
+        require(x_int < 256, 'pow2: x should be less than 256');
+        return (1 << x_int) * pow2dec(x_dec);
+    }
+
+    function pow(uint a, uint b)
+    public view returns (uint) {
+        return pow2(b * log2(a) / ONE);
+    }
+
+    function test(uint a) 
+    external pure returns (uint) {
+        return 1 << a;
     }
 }
